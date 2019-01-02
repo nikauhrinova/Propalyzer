@@ -1,6 +1,6 @@
 import requests
 import logging
-from .secret import Secret
+# from .secret import Secret
 import xml.etree.cElementTree as ET
 
 LOG = logging.getLogger(__name__)
