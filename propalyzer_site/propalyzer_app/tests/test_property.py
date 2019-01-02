@@ -1,9 +1,9 @@
 from django.test import TestCase
 from ..property import PropSetup
-from ..secret import Secret
+# from ..secret import Secret
 import requests
 
-ZWSID = Secret.ZWSID
+ZWSID = ''
 
 
 class PropertyModelTest(TestCase):
