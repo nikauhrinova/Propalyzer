@@ -5,10 +5,14 @@ from decimal import Decimal, getcontext
 from bs4 import BeautifulSoup
 import usaddress
 from .county import County
-from .secret import Secret
+# from .secret import Secret
 import xml.etree.cElementTree as ET
+try:
+	from .secret import Secret
+except ImportError:
+	pass
 
-ZWSID = Secret.ZWSID
+ZWSID = ''
 
 
 def mk_int(s):
