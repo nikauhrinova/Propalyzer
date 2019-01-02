@@ -39,7 +39,7 @@ class GreatSchools:
 		Function builds the GreatSchools API URLs (one for each level of school)
 		:return: Sets self.error if issues arise during API calls
 		"""
-		if Secret.GSCHOOL_API_KEY:
+		if False:
 			self.elem_url = 'https://api.greatschools.org/schools/nearby?'
 			self.elem_url += 'key={gs_key}&address={street}&city={city}&state={state}&zip={zip}&schoolType=public' \
 				'&radius=5&limit=2&levelCode={level}'.format(
