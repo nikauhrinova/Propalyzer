@@ -1,6 +1,11 @@
+from builtins import TypeError, PermissionError
+
 from django.test import TestCase
+
+from ..county import County
 from ..context_data import ContextData
 from ..secret import Secret
+from ..pdf_render import Render
 import requests
 
 ZWSID = Secret.ZWSID
@@ -132,3 +137,92 @@ class PropertyModelTest(TestCase):
         url = url1+url2+url3
         resp = str(requests.get(url))
         self.assertEqual(resp, '<Response [200]>')
+
+    def test_pdf_render(self):
+        path = "app/results.html"
+        params = {"address": "777 Brockton Avenue, Abington MA 2351",
+                    "taxes": "$125",
+                    "hoa": "$0",
+                    "rent": "$500",
+                    "vacancy": "$40",
+                    "oper_income": "$460",
+                    "total_mortgage": "$40",
+                    "down_payment_percentage": "25%",
+                    "down_payment": "$10",
+                    "curr_value": "$40",
+                    "init_cash_invest": "$10",
+                    "oper_exp": "$325",
+                    "net_oper_income": "$135",
+                    "cap_rate": "4000.0%",
+                    "initial_market_value": "$40",
+                    "interest_rate": "4.75%",
+                    "mort_payment": "$0",
+                    "sqft": "1800",
+                    "closing_costs": "$0",
+                    "initial_improvements": "$0",
+                    "cost_per_sqft": "$0",
+                    "insurance": "$83",
+                    "maintenance": "$66",
+                    "prop_management_fee": "$50",
+                    "utilities": "$0",
+                    "tenant_placement_fee": "$0",
+                    "resign_fee": "$0",
+                    "rtv": "1200.00%",
+                    "cash_flow": "$135",
+                    "oper_exp_ratio": "71.0%",
+                    "debt_coverage_ratio": "None",
+                    "cash_on_cash": "16200.00%"
+        }
+        resp = str(Render.render(path=path, params=params))
+        self.assertEqual(resp, '<HttpResponse status_code=200, "application/pdf">')
+
+    def test_pdf_render_empty_params(self):
+        path = "app/results.html"
+        params = ""
+        self.assertRaises(TypeError, Render.render, path, params)
+
+    def test_pdf_render_empty_path(self):
+        path = ""
+        params = {"address": "777 Brockton Avenue, Abington MA 2351",
+                    "taxes": "$125",
+                    "hoa": "$0",
+                    "rent": "$500",
+                    "vacancy": "$40",
+                    "oper_income": "$460",
+                    "total_mortgage": "$40",
+                    "down_payment_percentage": "25%",
+                    "down_payment": "$10",
+                    "curr_value": "$40",
+                    "init_cash_invest": "$10",
+                    "oper_exp": "$325",
+                    "net_oper_income": "$135",
+                    "cap_rate": "4000.0%",
+                    "initial_market_value": "$40",
+                    "interest_rate": "4.75%",
+                    "mort_payment": "$0",
+                    "sqft": "1800",
+                    "closing_costs": "$0",
+                    "initial_improvements": "$0",
+                    "cost_per_sqft": "$0",
+                    "insurance": "$83",
+                    "maintenance": "$66",
+                    "prop_management_fee": "$50",
+                    "utilities": "$0",
+                    "tenant_placement_fee": "$0",
+                    "resign_fee": "$0",
+                    "rtv": "1200.00%",
+                    "cash_flow": "$135",
+                    "oper_exp_ratio": "71.0%",
+                    "debt_coverage_ratio": "None",
+                    "cash_on_cash": "16200.00%"
+        }
+        self.assertRaises(PermissionError, Render.render, path, params)
+
+    def test_find_correct_county_from_full_zipcode(self):
+        self.assertEqual(County.county_finder('01000'), 'Alabama')
+
+    def test_find_correct_county_from_short_zipcode(self):
+        self.assertEqual(County.county_finder('1000'), 'Alabama')
+
+    def test_find_correct_county_from_zipcode_unknown(self):
+        self.assertEqual(County.county_finder('00000'), 'Unknown')
